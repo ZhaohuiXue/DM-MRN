@@ -46,8 +46,3 @@ Copyright (c) 2023 by Zhaohui Xue & Jun Zeng
 zhaohui.xue@hhu.edu.cn & zjun5566@163.com
 
 
-For full package
---------------------
-
-https://sites.google.com/site/zhaohuixuers/
-
