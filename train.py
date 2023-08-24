@@ -48,7 +48,7 @@ def data_init(run):
 #############################Optim##################################
 criterion = nn.MSELoss().cuda(GPU)
 #############################Train##################################
-def xunlian(run):
+def train_run(run):
     print("Running an experiment with run {}/{}".format(run + 1, N_RUNS))
     display_iter = 10
     losses = np.zeros(ITER_NUM+1)
@@ -65,16 +65,13 @@ def xunlian(run):
 
     start_time = time.time()
 
-    for iter_ in tqdm(range(1, ITER_NUM + 1), desc='Training the network'):    #ITER_NUM
+    for iter_ in tqdm(range(1, ITER_NUM + 1), desc='Training the network'):
         task_test_gt, rest_gt, _, _ = sample_gt(train_gt, 1, mode='fixed_withone')
         task_train_gt, rest_gt, task_index, special_list = sample_gt(train_gt, BATCH_SIZE_PER_CLASS,mode='fixed_withone')
         task_test_dataset.resetGt(task_test_gt)
         task_test_loader = Torchdata.DataLoader(task_test_dataset, batch_size=N_CLASSES, shuffle=False)
         task_train_dataset.resetGt(task_train_gt)
-        task_batch_size = 0
-        for i in range(len(task_index)):
-            task_batch_size = task_batch_size + special_list[i] // 2
-        task_batch_size = (N_CLASSES - len(task_index)) * BATCH_SIZE_PER_CLASS + task_batch_size
+        task_batch_size = np.count_nonzero(task_train_gt)
         task_train_loader = Torchdata.DataLoader(task_train_dataset, batch_size=task_batch_size, shuffle=False)
 
         samples, sample_labels = task_train_loader.__iter__().next()
@@ -120,9 +117,9 @@ def xunlian(run):
 ####################################################################
 def main():
     for run in range(N_RUNS):
-        xunlian(run)
+        train_run(run)
     #record time
-    ACCU_DIR = RESULT_DIR + 'Accu_file/' + DATASET + '/' + str(SAMPLE_SIZE) + '_' + str(ITER_NUM) + '/'
+    ACCU_DIR = RESULT_DIR + 'Accu_File/' + DATASET + '/' + str(SAMPLE_SIZE) + '_' + str(ITER_NUM) + '/'
     if not os.path.isdir(ACCU_DIR):
         os.makedirs(ACCU_DIR)
     time_path = ACCU_DIR+str(DATASET)+'_'+str(SAMPLE_SIZE)+'.txt'
